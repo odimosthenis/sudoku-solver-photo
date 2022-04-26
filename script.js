@@ -2,16 +2,30 @@ window.onload = ()=>{
     let sudoku;
     const size=9;
     createGrid();
+    inputVal(document.querySelectorAll('input'))
     const solution = document.querySelector('#solution');
     solution.addEventListener('click',()=>{
         sudoku = getgrid(size)
-        //sudoku = starter
+        const e = validateData(sudoku);
+        if (e) {
+            errormsg(e)
+            return;
+        }
+        errormsg(e)
         console.log(sudoku)
 
-        const newsudoku = findSolution(sudoku);
-        console.log(newsudoku)
+        const solution = findSolution(sudoku);
+        console.log(solution)
+        writeSolution(sudoku,solution)        
 
-    })    
+    })  
+    
+    const clear = document.querySelector('#clear');
+    clear.addEventListener('click',()=>{
+        const container = document.querySelector('#container');
+        container.innerHTML = ''
+        createGrid()     
+    })  
 
 }
 
@@ -26,6 +40,8 @@ const starter= [
     [0,0,0,4,1,9,0,0,5],
     [0,0,0,0,8,0,0,7,9]
 ]
+
+
 
 function createGrid(){
     const grid = document.querySelector('#container')
@@ -87,18 +103,12 @@ function findSolution(sudoku){
         }
         if (zeroIndex==-1) return newchildren[0]
         children.push(...newchildren)
-        console.log(copySudoku(children))
     }
 
     return tempsudoku;
     
 }
 
-function next(sudoku){
-
-}
-
-window.n = next
 
 function findChildren(sudoku){
     let children = [];
@@ -117,7 +127,6 @@ function findChildren(sudoku){
         console.log('zeroindex out of index')
         return [sudoku];
     }
-    console.log(x,y)
     
 
     let flag = false;
@@ -159,7 +168,6 @@ function findChildren(sudoku){
         };
 
     }
-    if (children.length==0) console.log('p', y,x)
     return children;
 }
 
@@ -175,4 +183,57 @@ function copySudoku(sudoku){
         })
     } )
     return newSudoku;
+}
+
+function writeSolution(sudoku,solution) {
+
+    const grid = document.querySelectorAll('#container>div>input');
+    grid.forEach((el,i) => {
+        let x = i%9;
+        let y = Math.floor(i/9)
+        if (el.value == ''){
+            el.value = solution[y][x]
+            el.style.color = 'red'
+        } 
+        
+    });
+}
+
+function validateData(sudoku){
+    for (let y=0;y<9;y++){
+
+        // row dublicates
+        const set = new Set(sudoku[y]);
+        set.delete(0)
+        var count = 0;
+        sudoku[y].forEach((v) => (v == 0 && count++));
+        //console.log(set)
+        if ( set.size !== sudoku[y].length - count ){
+            console.log('d2!!')
+            return 'Your input violates sudoku rules!';
+        }
+    }
+
+    return false;
+}
+
+function errormsg(e){
+    console.log('er')
+    if(e){
+        document.querySelector('#error').textContent = e
+    } else{
+        document.querySelector('#error').textContent = ''
+
+    }
+}
+
+function inputVal(elements){
+    elements.forEach(el=>{
+        el.addEventListener('input',(e)=>{
+ 
+            if (! (!isNaN(el.value)  && parseInt(el.value) > 0 && parseInt(el.value)<=9 && el.value.length==1) ){
+                el.value = ''
+            }
+        })
+    })
 }
