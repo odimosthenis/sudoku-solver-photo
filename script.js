@@ -5,8 +5,8 @@ window.onload = ()=>{
     const solution = document.querySelector('#solution');
     solution.addEventListener('click',()=>{
         sudoku = getgrid(size)
+        //sudoku = starter
         console.log(sudoku)
-        window.s = sudoku
 
         const newsudoku = findSolution(sudoku);
         console.log(newsudoku)
@@ -14,6 +14,18 @@ window.onload = ()=>{
     })    
 
 }
+
+const starter= [
+    [5,3,0,0,7,0,0,0,0],
+    [6,0,0,1,9,5,0,0,0],
+    [0,9,8,0,0,0,0,6,0],
+    [8,0,0,0,6,0,0,0,3],
+    [4,0,0,8,0,3,0,0,1],
+    [7,0,0,0,2,0,0,0,6],
+    [0,6,0,0,0,0,2,8,0],
+    [0,0,0,4,1,9,0,0,5],
+    [0,0,0,0,8,0,0,7,9]
+]
 
 function createGrid(){
     const grid = document.querySelector('#container')
@@ -58,34 +70,55 @@ function getgrid(size){
     
 function findSolution(sudoku){
     let newsudoku = copySudoku(sudoku)
-    try{
-        sudoku.forEach( (row,y)=>{
-            row.forEach((val,x)=>{
-                if(sudoku[y][x]==0){
-                    let children = findChildren(newsudoku,y,x);
-                    if (children.length==0){
-                        console.log('end: ', newsudoku);
-                        throw 'Break';
-                    } 
-                    newsudoku = children[0]
+    let children = [newsudoku];
+    let tempsudoku = children[0]
+    while(children.length>0){
+        tempsudoku = children.pop();
+        let newchildren = findChildren(tempsudoku);
+        let zeroIndex=1;
+        if(newchildren.length==1){
+            zeroIndex=-1;
+            for (let p=0;p<9;p++){
+                zeroIndex = newchildren[0][p].indexOf(0,0);
+                if (zeroIndex!=-1){
+                    zeroIndex = 1;
                 }
-            })
-        } )
-    } catch(e){
-        
+            }
+        }
+        if (zeroIndex==-1) return newchildren[0]
+        children.push(...newchildren)
+        console.log(copySudoku(children))
     }
-    return newsudoku;
-    
 
+    return tempsudoku;
     
 }
 
-function findChildren(sudoku,y,x){
-    if (sudoku[y][x]!=0){
-        return -1
-    }
+function next(sudoku){
 
-    const children = [];
+}
+
+window.n = next
+
+function findChildren(sudoku){
+    let children = [];
+
+    let x=-1,y=-1;
+    let zeroIndex=-1;
+    for (let p=0;p<9;p++){
+        zeroIndex = sudoku[p].indexOf(0,0);
+        if (zeroIndex!=-1){
+            y=p;x=zeroIndex;
+            break;
+        }
+    }
+    if (zeroIndex==-1 ) {
+        console.log(sudoku)
+        console.log('zeroindex out of index')
+        return [sudoku];
+    }
+    console.log(x,y)
+    
 
     let flag = false;
     for (let i=1;i<=9;i++){
@@ -107,24 +140,18 @@ function findChildren(sudoku,y,x){
         // if (flag) continue;
 
         // square check
-        if (x == 6 && y ==1){
-            console.log(":")
-        }
         let sqxstart = 3*Math.floor(x/3);
         let sqystart = 3*Math.floor(y/3);
 
         for (let sqy=sqystart;sqy<sqystart+3;sqy++){
             // if (flag)break;
             for (let sqx=sqxstart;sqx<sqxstart+3;sqx++){
-                if (x == 6 && y ==1){
-                    console.log(":",sqy, sqx)
-                }
+
                 if (sudoku[sqy][sqx]==i){
                     flag = true;
                 }
             }
         }
-
         if (!flag){
             const newsudoku = copySudoku(sudoku)
             newsudoku[y][x] = i;
@@ -136,7 +163,6 @@ function findChildren(sudoku,y,x){
     return children;
 }
 
-window.f = findChildren
 
 function copySudoku(sudoku){
     const newSudoku = []
