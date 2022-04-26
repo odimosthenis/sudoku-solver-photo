@@ -214,11 +214,49 @@ function validateData(sudoku){
         }
     }
 
+    for (let x=0;x<9;x++){
+        let col = [];
+        for (let y=0;y<9;y++){
+            col.push(sudoku[y][x])
+        }
+        const set = new Set(col);
+        set.delete(0)
+        var count = 0;
+        col.forEach((v) => (v == 0 && count++));
+        //console.log(set)
+        if ( set.size !== col.length - count ){
+            console.log('d2!!')
+            return 'Your input violates sudoku rules!';
+        }
+
+    }
+
+    for(let sqx=0;sqx<3;sqx++){
+        for(let sqy=0;sqy<3;sqy++){
+            let sqarray = []
+            let sqxstart = 3*Math.floor(sqx/3);
+            let sqystart = 3*Math.floor(sqy/3);
+            for (let sqy=sqystart;sqy<sqystart+3;sqy++){
+                for (let sqx=sqxstart;sqx<sqxstart+3;sqx++){
+                    sqarray.push(sudoku[sqy][sqx])
+                }
+            }
+            const set = new Set(sqarray);
+            set.delete(0)
+            var count = 0;
+            sqarray.forEach((v) => (v == 0 && count++));
+            //console.log(set)
+            if ( set.size !== sqarray.length - count ){
+                console.log('d2!!')
+                return 'Your input violates sudoku rules!';
+            }
+        } 
+    }
+
     return false;
 }
 
 function errormsg(e){
-    console.log('er')
     if(e){
         document.querySelector('#error').textContent = e
     } else{
