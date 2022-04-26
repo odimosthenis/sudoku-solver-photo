@@ -6,7 +6,7 @@ body{
     display: inline-grid;
     grid-template-columns: repeat(9, 50px);
     background-color: #000000;
-    padding: 10px;
+    padding: 5px;
 }
 
 #container > div{
