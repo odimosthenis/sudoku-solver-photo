@@ -186,11 +186,26 @@ function copySudoku(sudoku){
 }
 
 function writeSolution(sudoku,solution) {
-
     const grid = document.querySelectorAll('#container>div>input');
+    let issolved=true;
     grid.forEach((el,i) => {
         let x = i%9;
         let y = Math.floor(i/9)
+        if( solution[y][x] == 0 ){
+            errormsg('No Solution found!')
+            issolved=false;
+            return;
+        }
+    });
+    if (!issolved) return;
+    grid.forEach((el,i) => {
+        let x = i%9;
+        let y = Math.floor(i/9)
+        if( solution[y][x] == 0 ){
+            errormsg('No Solution found!')
+            return;
+        }
+
         if (el.value == ''){
             el.value = solution[y][x]
             el.style.color = 'red'
